@@ -18,6 +18,7 @@ public class MemoryModule {
     //TODO: Add warning for out of bound memory instead of automatically adding more
     public Boolean AddElement(Object o){
         //Using ASCII instead of UTF_8 to avoid multiple byte variables (UTF_8 varies in size)
+        //TODO: US_ASCII is 7 bit for some reason, make sure this doesn't impact size check (it shouldn't)
         if( o.toString().getBytes(StandardCharsets.US_ASCII).length > this.wordsize ) //Size > 32bit
             return false;
         else
