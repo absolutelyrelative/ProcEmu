@@ -3,7 +3,7 @@ package Components.Controllers;
 public class Signal {
 
     private String name;
-    private Boolean status;
+    private Boolean status = false;
 
     public Signal(String name){
         this.name = name;

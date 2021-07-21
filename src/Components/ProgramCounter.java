@@ -2,12 +2,12 @@ package Components;
 
 public class ProgramCounter {
 
-    private int wordlocation = 0;
-    private int instructionmemorylocation = 0;
-    private int maxvalue = 0; //TODO: Unused (?)
-    private int wordsize = 0;
+    private long wordlocation = 0;
+    private long instructionmemorylocation = 0;
+    private long maxvalue = 0; //TODO: Unused (?)
+    private Double wordsize = 1.0;
 
-    public ProgramCounter(int wordsize){
+    public ProgramCounter(Double wordsize){
         this.wordsize = wordsize;
     }
 
@@ -18,6 +18,6 @@ public class ProgramCounter {
 
     public void SetPC(int instructionmemorylocation){
         this.instructionmemorylocation = instructionmemorylocation;
-        this.wordlocation = this.instructionmemorylocation * this.wordsize;
+        this.wordlocation = this.instructionmemorylocation * Math.round(this.wordsize);
     }
 }
