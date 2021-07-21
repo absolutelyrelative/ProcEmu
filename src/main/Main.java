@@ -4,7 +4,7 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
-        System.out.println("Test");
+        System.out.println("");
         InstructionMemory IM = new InstructionMemory(16.0,1,0); //2^8 = 8 bit -> max. value 256
         //int a = 257;
         //int b = 2147483647;
@@ -17,7 +17,7 @@ public class Main {
         //System.out.println(IM.toHex("abcdefg"));
         //System.out.println(IM.toHex("abcdefgeeeee"));
         //System.out.println(IM.toHex(""));
-        System.out.println(IM.AddElement("zz"));
+        System.out.println(IM.AddElement("az"));
         System.out.println(IM.AddElement(256));
         System.out.println(IM.AddElement(257));
         System.out.println("------------------");

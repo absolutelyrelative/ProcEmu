@@ -1,14 +1,12 @@
 package Components.Controllers;
 
-import java.util.Vector;
-
 public class SingleCycleController {
 
 
     private static SingleCycleController instance;
 
-    public static SingleCycleController getInstance(){
-        if(instance == null)
+    public static SingleCycleController getInstance() {
+        if (instance == null)
             instance = new SingleCycleController();
         return instance;
     }
@@ -24,7 +22,7 @@ public class SingleCycleController {
     public Signal ALUsource;
     public Signal registerwrite;
 
-    public SingleCycleController(){
+    public SingleCycleController() {
         registerdestination = new Signal("RegisterDestination");
         jump = new Signal("Jump");
         branch = new Signal("Branch");

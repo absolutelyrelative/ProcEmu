@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test']
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntime        'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    //implementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.7.0'  // Or whatever version
+}
+
+test {
+    useJUnitPlatform()
+    //useJUnit()
+
+    maxHeapSize = '1G'
+    /*filter {
+        //include specific method in any of the tests
+        //includeTestsMatching "*UiCheck"
+
+        //include all tests from package
+        includeTestsMatching "*"
+
+        //include all integration tests
+        //includeTestsMatching "*IntegTest"
+    }*/
+}
+
+mainClassName = 'Main'
