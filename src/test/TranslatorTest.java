@@ -23,7 +23,7 @@ public class TranslatorTest {
         assertEquals("24",translator.RegisterFinder("r24").GetMessage());
         assertEquals("24",translator.RegisterFinder("T24").GetMessage());
         assertEquals("24",translator.RegisterFinder("24").GetMessage());
-        assertEquals("4",translator.RegisterFinder("04").GetMessage());
+        assertEquals(4,Integer.parseInt(translator.RegisterFinder("04").GetMessage()));
         assertEquals("Register limit overflow / underflow.",translator.RegisterFinder("R33").GetMessage());
         assertEquals("Register limit overflow / underflow.",translator.RegisterFinder("R-3").GetMessage());
         assertEquals("Register not found.",translator.RegisterFinder("RXX").GetMessage());
@@ -33,6 +33,12 @@ public class TranslatorTest {
     @Test
     @DisplayName("ADD instruction parsing check.")
     public void TestADDParsing(){
-        assertEquals("18423840",translator.GetMachineCode("ADD R8,R17,R18"));
+        assertEquals("18423840",translator.GetMachineCode("ADD R8,R17,R18").GetMessage());
+    }
+
+    @Test
+    @DisplayName("SUB instruction parsing check.")
+    public void TestSUBParsing(){
+        assertEquals("18423842",translator.GetMachineCode("SUB R8,R17,R18").GetMessage());
     }
 }

@@ -37,6 +37,10 @@ public class Translator {
 
     public Result GetMachineCode(String instruction){
         Result r = new Result();
+        Result rdresult;
+        Result rtresult;
+        Result rsresult;
+        Result roresult;
         //String example = "ADD R18,R17,R18";
         /*Pattern opcodepattern = Pattern.compile("^[a-z]* .", Pattern.CASE_INSENSITIVE);
         Matcher matcher = opcodepattern.matcher(instruction);
@@ -53,21 +57,21 @@ public class Translator {
         switch(output[0].toUpperCase()){
             case "ADD":
                 //Parsing registers
-                Result rdresult = RegisterFinder(output[1]);
+                rdresult = RegisterFinder(output[1]);
                 if(rdresult.IsSuccessful()){
                     rd = Integer.parseInt(rdresult.GetMessage());
                 } else {
                     r.SetSuccess(false);
                     r.SetMessage("Register not found.");
                 }
-                Result rsresult = RegisterFinder(output[2]);
+                rsresult = RegisterFinder(output[2]);
                 if(rsresult.IsSuccessful()){
                     rs = Integer.parseInt(rsresult.GetMessage());
                 } else {
                     r.SetSuccess(false);
                     r.SetMessage("Register not found.");
                 }
-                Result rtresult = RegisterFinder(output[3]);
+                rtresult = RegisterFinder(output[3]);
                 if(rtresult.IsSuccessful()){
                     rt = Integer.parseInt(rtresult.GetMessage());
                 } else {
@@ -81,7 +85,33 @@ public class Translator {
                 r.SetMessage(Long.toString(machinecode));
                 break;
             case "SUB":
-                machinecode &= 34; //FUNCT
+                //Parsing registers
+                rdresult = RegisterFinder(output[1]);
+                if(rdresult.IsSuccessful()){
+                    rd = Integer.parseInt(rdresult.GetMessage());
+                } else {
+                    r.SetSuccess(false);
+                    r.SetMessage("Register not found.");
+                }
+                rsresult = RegisterFinder(output[2]);
+                if(rsresult.IsSuccessful()){
+                    rs = Integer.parseInt(rsresult.GetMessage());
+                } else {
+                    r.SetSuccess(false);
+                    r.SetMessage("Register not found.");
+                }
+                rtresult = RegisterFinder(output[3]);
+                if(rtresult.IsSuccessful()){
+                    rt = Integer.parseInt(rtresult.GetMessage());
+                } else {
+                    r.SetSuccess(false);
+                    r.SetMessage("Register not found.");
+                }
+
+                //Building instruction
+                machinecode &= (34 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
+                r.SetSuccess(true);
+                r.SetMessage(Long.toString(machinecode));
                 break;
             case "LW":
                 break;
