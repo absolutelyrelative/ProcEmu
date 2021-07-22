@@ -4,7 +4,7 @@ public class ProgramCounter {
 
     private long wordlocation = 0;
     private long instructionmemorylocation = 0;
-    private long maxvalue = 0; //TODO: Unused (?)
+    private long maxvalue = 0; //Unused (?)
     private Double wordsize = 1.0;
 
     public ProgramCounter(Double wordsize) {

@@ -1,5 +1,7 @@
 import Components.InstructionMemory;
 
+import java.util.Vector;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -22,5 +24,6 @@ public class Main {
         System.out.println(IM.AddElement(257));
         System.out.println("------------------");
         IM.PrintMemory();
+
     }
 }

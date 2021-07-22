@@ -4,6 +4,6 @@ package Components;
 public class DataMemory extends MemoryModule {
 
     public DataMemory(Double wordsize, int size, long offset) {
-        super(wordsize, size, offset);
+        super(wordsize, size, offset, true);
     }
 }
