@@ -5,6 +5,7 @@ import java.util.Vector;
 public class RegisterFile extends MemoryModule {
     private static String prefix = "R";
 
+    //TODO: Currently only 32 bits are supported in translator. Change this to allow n registers.
     public RegisterFile(Double wordsize, int registeramount) {
         super(wordsize, registeramount, 0, false); //Registers have no offset and should not be expanded.
     }
@@ -14,7 +15,7 @@ public class RegisterFile extends MemoryModule {
     }
 
     //TODO: Optimise with recursion
-    public void PrintMemory() {
+    public void PrintInstructionMemory() {
         //Avoid multiple calls
         Vector<Object> tempmem = super.GetMemory();
         //For registers it's 0 but let's call it anyway

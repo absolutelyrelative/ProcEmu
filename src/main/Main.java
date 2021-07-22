@@ -1,3 +1,4 @@
+import Assembler.Translator;
 import Components.InstructionMemory;
 
 import java.util.Vector;
@@ -6,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
-        System.out.println("");
+    /*    System.out.println("");
         InstructionMemory IM = new InstructionMemory(16.0,1,0); //2^8 = 8 bit -> max. value 256
         //int a = 257;
         //int b = 2147483647;
@@ -24,6 +25,8 @@ public class Main {
         System.out.println(IM.AddElement(257));
         System.out.println("------------------");
         IM.PrintMemory();
-
+    */
+        Translator tr = new Translator();
+        System.out.println(tr.GetMachineCode("ADD R8,R17,R18").GetMessage());
     }
 }

@@ -3,6 +3,7 @@ package Components;
 import Util.Result;
 
 import java.math.BigInteger;
+import java.util.Iterator;
 import java.util.Vector;
 
 public class MemoryModule {
@@ -12,6 +13,7 @@ public class MemoryModule {
     private Vector<Object> MemoryContents;
     private Boolean allowexpansion = true;
     private int originalsize;
+    private Iterator<Object> iterator; //Is this redundant ?
 
     public MemoryModule(Double wordsize, int size, long offset, Boolean allowexpansion) {
         this.MemoryContents = new Vector<>(size);
@@ -19,6 +21,7 @@ public class MemoryModule {
         this.wordsize = wordsize;
         this.allowexpansion = allowexpansion;
         this.originalsize = size;
+        iterator = this.MemoryContents.iterator();
     }
 
     //TODO: Add warning for out of bound memory instead of automatically adding more
@@ -125,6 +128,10 @@ public class MemoryModule {
 
     public long GetOffset() {
         return offset;
+    }
+
+    public Object GetNextCell() {
+        return iterator.next();
     }
 
 }

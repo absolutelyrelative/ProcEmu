@@ -7,4 +7,9 @@ public class InstructionMemory extends MemoryModule {
         super(wordsize, size, offset, true);
         this.pc = new ProgramCounter(wordsize);
     }
+
+    public ProgramCounter GetPC() {
+        return pc;
+    }
+
 }
