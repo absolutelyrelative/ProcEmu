@@ -41,4 +41,35 @@ public class TranslatorTest {
     public void TestSUBParsing(){
         assertEquals("18423842",translator.GetMachineCode("SUB R8,R17,R18").GetMessage());
     }
+
+    @Test
+    @DisplayName("Offset parsing check.")
+    public void TestOffsetParsing(){
+        //BEQ
+        assertEquals("32767",translator.OffsetFinder("32767",0).GetMessage());
+        assertEquals("-32767",translator.OffsetFinder("-32767",0).GetMessage());
+        assertEquals("0",translator.OffsetFinder("0",0).GetMessage());
+        assertEquals("Offset Underflow / Overflow.",translator.OffsetFinder("32768",0).GetMessage());
+        assertEquals("Offset Underflow / Overflow.",translator.OffsetFinder("-32768",0).GetMessage());
+        assertEquals("Register not found.",translator.OffsetFinder("xXXXà",0).GetMessage());
+
+        //JMP
+        assertEquals("33554431",translator.OffsetFinder("33554431",1).GetMessage());
+        assertEquals("-33554431",translator.OffsetFinder("-33554431",1).GetMessage());
+        assertEquals("0",translator.OffsetFinder("0",1).GetMessage());
+        assertEquals("Offset Underflow / Overflow.",translator.OffsetFinder("33554432",1).GetMessage());
+        assertEquals("Offset Underflow / Overflow.",translator.OffsetFinder("-33554432",1).GetMessage());
+        assertEquals("Register not found.",translator.OffsetFinder("xXXXà",1).GetMessage());
+    }
+
+    @Test
+    @DisplayName("JMP instruction parsing check.")
+    public void TestJMPParsing(){
+        assertEquals("134217728",translator.GetMachineCode("JMP 0").GetMessage());
+        assertEquals("134217729",translator.GetMachineCode("JMP 1").GetMessage());
+        assertEquals("167772161",translator.GetMachineCode("JMP -1").GetMessage()); //
+        assertEquals("167772159",translator.GetMachineCode("JMP 33554431").GetMessage());
+        assertEquals("201326591",translator.GetMachineCode("JMP -33554431").GetMessage()); //
+    }
+
 }
