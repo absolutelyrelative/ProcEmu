@@ -45,180 +45,216 @@ public class Translator {
         Integer machinecode = 0xFFFFFFFF;
         switch (output[0].toUpperCase()) {
             case "ADD": {
-                //Parsing registers
-                rsresult = RegisterFinder(output[1]);
-                if (rsresult.IsSuccessful()) {
-                    rd = Integer.parseInt(rsresult.GetMessage());
-                } else {
+                if (output.length != 4){
                     r.SetSuccess(false);
-                    r.SetMessage("Register not found.");
+                    r.SetMessage("Wrong instruction format for " + instruction);
                     break;
-                }
-                rsresult = RegisterFinder(output[2]);
-                if (rsresult.IsSuccessful()) {
-                    rs = Integer.parseInt(rsresult.GetMessage());
                 } else {
-                    r.SetSuccess(false);
-                    r.SetMessage("Register not found.");
-                    break;
-                }
-                rtresult = RegisterFinder(output[3]);
-                if (rtresult.IsSuccessful()) {
-                    rt = Integer.parseInt(rtresult.GetMessage());
-                } else {
-                    r.SetSuccess(false);
-                    r.SetMessage("Register not found.");
-                    break;
-                }
+                    //Parsing registers
+                    rsresult = RegisterFinder(output[1]);
+                    if (rsresult.IsSuccessful()) {
+                        rd = Integer.parseInt(rsresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Register not found.");
+                        break;
+                    }
+                    rsresult = RegisterFinder(output[2]);
+                    if (rsresult.IsSuccessful()) {
+                        rs = Integer.parseInt(rsresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Register not found.");
+                        break;
+                    }
+                    rtresult = RegisterFinder(output[3]);
+                    if (rtresult.IsSuccessful()) {
+                        rt = Integer.parseInt(rtresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Register not found.");
+                        break;
+                    }
 
-                //Building instruction
-                machinecode &= (int) (32 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
-                r.SetSuccess(true);
-                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
-                break;
+                    //Building instruction
+                    machinecode &= (int) (32 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
+                    r.SetSuccess(true);
+                    r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
+                    break;
+                }
             }
             case "SUB": {
-                //Parsing registers
-                rsresult = RegisterFinder(output[1]);
-                if (rsresult.IsSuccessful()) {
-                    rd = Integer.parseInt(rsresult.GetMessage());
-                } else {
+                if (output.length != 4){
                     r.SetSuccess(false);
-                    r.SetMessage("Register not found.");
-                }
-                rsresult = RegisterFinder(output[2]);
-                if (rsresult.IsSuccessful()) {
-                    rs = Integer.parseInt(rsresult.GetMessage());
+                    r.SetMessage("Wrong instruction format for " + instruction);
+                    break;
                 } else {
-                    r.SetSuccess(false);
-                    r.SetMessage("Register not found.");
-                }
-                rtresult = RegisterFinder(output[3]);
-                if (rtresult.IsSuccessful()) {
-                    rt = Integer.parseInt(rtresult.GetMessage());
-                } else {
-                    r.SetSuccess(false);
-                    r.SetMessage("Register not found.");
-                }
+                    //Parsing registers
+                    rsresult = RegisterFinder(output[1]);
+                    if (rsresult.IsSuccessful()) {
+                        rd = Integer.parseInt(rsresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Register not found.");
+                    }
+                    rsresult = RegisterFinder(output[2]);
+                    if (rsresult.IsSuccessful()) {
+                        rs = Integer.parseInt(rsresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Register not found.");
+                    }
+                    rtresult = RegisterFinder(output[3]);
+                    if (rtresult.IsSuccessful()) {
+                        rt = Integer.parseInt(rtresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Register not found.");
+                    }
 
-                //Building instruction
-                machinecode &= (int) (34 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
-                r.SetSuccess(true);
-                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
-                break;
+                    //Building instruction
+                    machinecode &= (int) (34 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
+                    r.SetSuccess(true);
+                    r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
+                    break;
+                }
             }
             case "LW": { //TODO: Reading from a non-multiple of (wordsize) should be possible.
-                //Parsing registers RO, RD, OFFSET
-                rsresult = RegisterFinder(output[1]);
-                offsetresult = OffsetFinder(output[2]   ,0);
-                roresult = RegisterFinder(output[3]);
-                if(rsresult.IsSuccessful() && roresult.IsSuccessful() && offsetresult.IsSuccessful()){
-                    rd = Integer.parseInt(rsresult.GetMessage());
-                    ro = Integer.parseInt(roresult.GetMessage());
-                    offset = Long.parseLong(offsetresult.GetMessage());
-                } else {
+                if (output.length != 4){
                     r.SetSuccess(false);
-                    r.SetMessage("Registers / offset not found.");
+                    r.SetMessage("Wrong instruction format for " + instruction);
+                    break;
+                } else {
+                    //Parsing registers RO, RD, OFFSET
+                    rsresult = RegisterFinder(output[1]);
+                    offsetresult = OffsetFinder(output[2], 0);
+                    roresult = RegisterFinder(output[3]);
+                    if (rsresult.IsSuccessful() && roresult.IsSuccessful() && offsetresult.IsSuccessful()) {
+                        rd = Integer.parseInt(rsresult.GetMessage());
+                        ro = Integer.parseInt(roresult.GetMessage());
+                        offset = Long.parseLong(offsetresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Registers / offset not found.");
+                        break;
+                    }
+
+                    //Building instruction
+                    if (offset < 0) { //Negative signed binary algebra
+                        offset = Math.abs(offset);
+                        offset = offset + (1 << 15); //negative bit
+                    }
+                    machinecode &= (int) ((35 << 26) + ((long) ro << 21) + ((long) rd << 16) + offset);
+                    r.SetSuccess(true);
+                    r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                     break;
                 }
-
-                //Building instruction
-                if(offset < 0){ //Negative signed binary algebra
-                    offset = Math.abs(offset);
-                    offset = offset + (1 << 15); //negative bit
-                }
-                machinecode &= (int) ((35 << 26) + ((long) ro << 21) + ((long) rd << 16) + offset);
-                r.SetSuccess(true);
-                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
-                break;
             }
             case "SW": {
-                //Parsing registers RO, RS, OFFSET
-                rsresult = RegisterFinder(output[1]);
-                offsetresult = OffsetFinder(output[2]   ,0);
-                roresult = RegisterFinder(output[3]);
-                if(rsresult.IsSuccessful() && roresult.IsSuccessful() && offsetresult.IsSuccessful()){
-                    rd = Integer.parseInt(rsresult.GetMessage());
-                    ro = Integer.parseInt(roresult.GetMessage());
-                    offset = Long.parseLong(offsetresult.GetMessage());
-                } else {
+                if (output.length != 4){
                     r.SetSuccess(false);
-                    r.SetMessage("Registers / offset not found.");
+                    r.SetMessage("Wrong instruction format for " + instruction);
+                    break;
+                } else {
+                    //Parsing registers RO, RS, OFFSET
+                    rsresult = RegisterFinder(output[1]);
+                    offsetresult = OffsetFinder(output[2], 0);
+                    roresult = RegisterFinder(output[3]);
+                    if (rsresult.IsSuccessful() && roresult.IsSuccessful() && offsetresult.IsSuccessful()) {
+                        rd = Integer.parseInt(rsresult.GetMessage());
+                        ro = Integer.parseInt(roresult.GetMessage());
+                        offset = Long.parseLong(offsetresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Registers / offset not found.");
+                        break;
+                    }
+
+                    //Building instruction
+                    if (offset < 0) { //Negative signed binary algebra
+                        offset = Math.abs(offset);
+                        offset = offset + (1 << 15); //negative bit
+                    }
+                    machinecode &= (int) ((43 << 26) + ((long) ro << 21) + ((long) rd << 16) + offset);
+                    r.SetSuccess(true);
+                    r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                     break;
                 }
-
-                //Building instruction
-                if(offset < 0){ //Negative signed binary algebra
-                    offset = Math.abs(offset);
-                    offset = offset + (1 << 15); //negative bit
-                }
-                machinecode &= (int) ((43 << 26) + ((long) ro << 21) + ((long) rd << 16) + offset);
-                r.SetSuccess(true);
-                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
-                break;
             }
             case "BEQ":{
-                //Parsing registers
-                rsresult = RegisterFinder(output[1]);
-                if (rsresult.IsSuccessful()) {
-                    rs = Integer.parseInt(rsresult.GetMessage());
-                } else {
+                if (output.length != 4){
                     r.SetSuccess(false);
-                    r.SetMessage("Register not found.");
+                    r.SetMessage("Wrong instruction format for " + instruction);
                     break;
-                }
-                rtresult = RegisterFinder(output[2]);
-                if (rtresult.IsSuccessful()) {
-                    rt = Integer.parseInt(rtresult.GetMessage());
                 } else {
-                    r.SetSuccess(false);
-                    r.SetMessage("Register not found.");
-                    break;
-                }
+                    //Parsing registers
+                    rsresult = RegisterFinder(output[1]);
+                    if (rsresult.IsSuccessful()) {
+                        rs = Integer.parseInt(rsresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Register not found.");
+                        break;
+                    }
+                    rtresult = RegisterFinder(output[2]);
+                    if (rtresult.IsSuccessful()) {
+                        rt = Integer.parseInt(rtresult.GetMessage());
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Register not found.");
+                        break;
+                    }
 
-                //Parsing offset
-                offsetresult = OffsetFinder(output[3], 0);
-                if (offsetresult.IsSuccessful()) {
-                    offset = Long.parseLong(offsetresult.GetMessage());
-                    //TODO: BEQ specifies number of WORDS to jump, this is fine, but implement word jumping later on if necessary.
-                } else {
-                    r.SetSuccess(false);
-                    r.SetMessage("Couldn't parse offset.");
+                    //Parsing offset
+                    offsetresult = OffsetFinder(output[3], 0);
+                    if (offsetresult.IsSuccessful()) {
+                        offset = Long.parseLong(offsetresult.GetMessage());
+                        //TODO: BEQ specifies number of WORDS to jump, this is fine, but implement word jumping later on if necessary.
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Couldn't parse offset.");
+                        break;
+                    }
+
+                    //Building instruction
+                    if (offset < 0) { //Negative signed binary algebra
+                        offset = Math.abs(offset);
+                        offset = offset + (1 << 15); //negative bit
+                    }
+                    machinecode &= (int) (((long) 4 << 26) + offset + ((long) rs << 21) + ((long) rt << 16));
+                    r.SetSuccess(true);
+                    r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                     break;
                 }
-
-                //Building instruction
-                if(offset < 0){ //Negative signed binary algebra
-                    offset = Math.abs(offset);
-                    offset = offset + (1 << 15); //negative bit
-                }
-                machinecode &= (int) (((long) 4 << 26) + offset + ((long) rs << 21 ) + ((long) rt << 16));
-                r.SetSuccess(true);
-                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
-                break;
             }
             case "JMP": {
-                //Parsing offset
-                offsetresult = OffsetFinder(output[1], 1);
-                if (offsetresult.IsSuccessful()) {
-                    offset = Long.parseLong(offsetresult.GetMessage());
-                    //TODO: JMP specifies number of WORDS to jump, this is fine, but implement word jumping later on if necessary.
-                    //offset = (long)Math.floor((double)offset); //JMP cannot be done byte by byte
-                } else {
+                if (output.length != 2){
                     r.SetSuccess(false);
-                    r.SetMessage("Couldn't parse offset.");
+                    r.SetMessage("Wrong instruction format for " + instruction);
+                    break;
+                } else {
+                    //Parsing offset
+                    offsetresult = OffsetFinder(output[1], 1);
+                    if (offsetresult.IsSuccessful()) {
+                        offset = Long.parseLong(offsetresult.GetMessage());
+                        //TODO: JMP specifies number of WORDS to jump, this is fine, but implement word jumping later on if necessary.
+                        //offset = (long)Math.floor((double)offset); //JMP cannot be done byte by byte
+                    } else {
+                        r.SetSuccess(false);
+                        r.SetMessage("Couldn't parse offset.");
+                        break;
+                    }
+
+                    //Building instruction
+                    if (offset < 0) { //Negative signed binary algebra
+                        offset = Math.abs(offset);
+                        offset = offset + (1 << 25); //negative bit
+                    }
+                    machinecode &= (int) (((long) 2 << 26) + offset);
+                    r.SetSuccess(true);
+                    r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                     break;
                 }
-
-                //Building instruction
-                if(offset < 0){ //Negative signed binary algebra
-                    offset = Math.abs(offset);
-                    offset = offset + (1 << 25); //negative bit
-                }
-                machinecode &= (int) (((long) 2 << 26) + offset);
-                r.SetSuccess(true);
-                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
-                break;
             }
             default: {
                 r.SetSuccess(false);
