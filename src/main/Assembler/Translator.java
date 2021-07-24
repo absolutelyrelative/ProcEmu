@@ -37,7 +37,7 @@ public class Translator {
 
     public Result GetMachineCode(String instruction) {
         Result r = new Result();
-        Result rdresult, rtresult, rsresult, roresult;
+        Result rsresult, rtresult, rdresult, roresult;
         Result offsetresult;
         String[] output = instruction.split("[ ,()]+"); //TODO: Find better Regex, ex. [\p{Punct}\s]+
 
@@ -46,9 +46,9 @@ public class Translator {
         switch (output[0].toUpperCase()) {
             case "ADD": {
                 //Parsing registers
-                rdresult = RegisterFinder(output[1]);
-                if (rdresult.IsSuccessful()) {
-                    rd = Integer.parseInt(rdresult.GetMessage());
+                rsresult = RegisterFinder(output[1]);
+                if (rsresult.IsSuccessful()) {
+                    rd = Integer.parseInt(rsresult.GetMessage());
                 } else {
                     r.SetSuccess(false);
                     r.SetMessage("Register not found.");
@@ -79,9 +79,9 @@ public class Translator {
             }
             case "SUB": {
                 //Parsing registers
-                rdresult = RegisterFinder(output[1]);
-                if (rdresult.IsSuccessful()) {
-                    rd = Integer.parseInt(rdresult.GetMessage());
+                rsresult = RegisterFinder(output[1]);
+                if (rsresult.IsSuccessful()) {
+                    rd = Integer.parseInt(rsresult.GetMessage());
                 } else {
                     r.SetSuccess(false);
                     r.SetMessage("Register not found.");
@@ -109,11 +109,11 @@ public class Translator {
             }
             case "LW": { //TODO: Reading from a non-multiple of (wordsize) should be possible.
                 //Parsing registers RO, RD, OFFSET
-                rdresult = RegisterFinder(output[1]);
+                rsresult = RegisterFinder(output[1]);
                 offsetresult = OffsetFinder(output[2]   ,0);
                 roresult = RegisterFinder(output[3]);
-                if(rdresult.IsSuccessful() && roresult.IsSuccessful() && offsetresult.IsSuccessful()){
-                    rd = Integer.parseInt(rdresult.GetMessage());
+                if(rsresult.IsSuccessful() && roresult.IsSuccessful() && offsetresult.IsSuccessful()){
+                    rd = Integer.parseInt(rsresult.GetMessage());
                     ro = Integer.parseInt(roresult.GetMessage());
                     offset = Long.parseLong(offsetresult.GetMessage());
                 } else {
@@ -132,8 +132,31 @@ public class Translator {
                 r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                 break;
             }
-            case "SW":
+            case "SW": {
+                //Parsing registers RO, RS, OFFSET
+                rsresult = RegisterFinder(output[1]);
+                offsetresult = OffsetFinder(output[2]   ,0);
+                roresult = RegisterFinder(output[3]);
+                if(rsresult.IsSuccessful() && roresult.IsSuccessful() && offsetresult.IsSuccessful()){
+                    rd = Integer.parseInt(rsresult.GetMessage());
+                    ro = Integer.parseInt(roresult.GetMessage());
+                    offset = Long.parseLong(offsetresult.GetMessage());
+                } else {
+                    r.SetSuccess(false);
+                    r.SetMessage("Registers / offset not found.");
+                    break;
+                }
+
+                //Building instruction
+                if(offset < 0){ //Negative signed binary algebra
+                    offset = Math.abs(offset);
+                    offset = offset + (1 << 15); //negative bit
+                }
+                machinecode &= (int) ((43 << 26) + ((long) ro << 21) + ((long) rd << 16) + offset);
+                r.SetSuccess(true);
+                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                 break;
+            }
             case "BEQ":{
                 //Parsing registers
                 rsresult = RegisterFinder(output[1]);

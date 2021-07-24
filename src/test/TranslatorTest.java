@@ -105,4 +105,22 @@ public class TranslatorTest {
         assertFalse(translator.GetMachineCode("LW R1,-32768(r1)").IsSuccessful());
     }
 
+    @Test
+    @DisplayName("SW instruction parsing check.")
+    public void TestSWParsing() {
+        assertEquals("2887843841", translator.GetMachineCode("SW R1,1(R1)").GetMessage());
+        assertEquals("2889941092", translator.GetMachineCode("SW R1,100(R2)").GetMessage());
+        assertEquals("2950692864", translator.GetMachineCode("SW R0,0(R31)").GetMessage());
+        assertEquals("2887712768", translator.GetMachineCode("SW R31,0(R0)").GetMessage());
+        assertEquals("2952724480", translator.GetMachineCode("SW R31,0(R31)").GetMessage());
+        assertEquals("2952757247", translator.GetMachineCode("SW R31,32767(R31)").GetMessage());
+        assertEquals("2952790015", translator.GetMachineCode("SW R31,-32767(R31)").GetMessage());
+        assertFalse(translator.GetMachineCode("SW R-1,0(R1)").IsSuccessful());
+        assertFalse(translator.GetMachineCode("SW R0,0(R-2)").IsSuccessful());
+        assertFalse(translator.GetMachineCode("SW -R1,0(r1)").IsSuccessful());
+        assertFalse(translator.GetMachineCode("SW R1,0(-r1)").IsSuccessful());
+        assertFalse(translator.GetMachineCode("SW R1,32768(r1)").IsSuccessful());
+        assertFalse(translator.GetMachineCode("SW R1,-32768(r1)").IsSuccessful());
+    }
+
 }
