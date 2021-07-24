@@ -7,9 +7,9 @@ import java.util.Vector;
 public class Main {
 
     public static void main(String[] args) {
-        String instruction = "ADD,-R1,.R2,     R3";
+        String instruction = "LW R1,100(R2)";
 
-        String[] output = instruction.split("[ ,]+");
+        String[] output = instruction.split("[ ,()]+");
         for(String s : output){
             System.out.println(s);
         }

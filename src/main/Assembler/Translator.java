@@ -39,9 +39,10 @@ public class Translator {
         Result r = new Result();
         Result rdresult, rtresult, rsresult, roresult;
         Result offsetresult;
-        String[] output = instruction.split("[ ,]+"); //TODO: Find better Regex, ex. [\p{Punct}\s]+
+        String[] output = instruction.split("[ ,()]+"); //TODO: Find better Regex, ex. [\p{Punct}\s]+
 
-        long machinecode = 0xFFFFFFFF;
+        //As of Java 8, this should be 32-bit with unsigned option
+        Integer machinecode = 0xFFFFFFFF;
         switch (output[0].toUpperCase()) {
             case "ADD": {
                 //Parsing registers
@@ -71,9 +72,9 @@ public class Translator {
                 }
 
                 //Building instruction
-                machinecode &= (32 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
+                machinecode &= (int) (32 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
                 r.SetSuccess(true);
-                r.SetMessage(Long.toString(machinecode));
+                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                 break;
             }
             case "SUB": {
@@ -101,23 +102,84 @@ public class Translator {
                 }
 
                 //Building instruction
-                machinecode &= (34 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
+                machinecode &= (int) (34 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
                 r.SetSuccess(true);
-                r.SetMessage(Long.toString(machinecode));
+                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                 break;
             }
-            case "LW":
+            case "LW": { //TODO: Reading from a non-multiple of (wordsize) should be possible.
+                //Parsing registers RO, RD, OFFSET
+                rdresult = RegisterFinder(output[1]);
+                offsetresult = OffsetFinder(output[2]   ,0);
+                roresult = RegisterFinder(output[3]);
+                if(rdresult.IsSuccessful() && roresult.IsSuccessful() && offsetresult.IsSuccessful()){
+                    rd = Integer.parseInt(rdresult.GetMessage());
+                    ro = Integer.parseInt(roresult.GetMessage());
+                    offset = Long.parseLong(offsetresult.GetMessage());
+                } else {
+                    r.SetSuccess(false);
+                    r.SetMessage("Registers / offset not found.");
+                    break;
+                }
+
+                //Building instruction
+                if(offset < 0){ //Negative signed binary algebra
+                    offset = Math.abs(offset);
+                    offset = offset + (1 << 15); //negative bit
+                }
+                machinecode &= (int) ((35 << 26) + ((long) ro << 21) + ((long) rd << 16) + offset);
+                r.SetSuccess(true);
+                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                 break;
+            }
             case "SW":
                 break;
-            case "BEQ":
+            case "BEQ":{
+                //Parsing registers
+                rsresult = RegisterFinder(output[1]);
+                if (rsresult.IsSuccessful()) {
+                    rs = Integer.parseInt(rsresult.GetMessage());
+                } else {
+                    r.SetSuccess(false);
+                    r.SetMessage("Register not found.");
+                    break;
+                }
+                rtresult = RegisterFinder(output[2]);
+                if (rtresult.IsSuccessful()) {
+                    rt = Integer.parseInt(rtresult.GetMessage());
+                } else {
+                    r.SetSuccess(false);
+                    r.SetMessage("Register not found.");
+                    break;
+                }
+
+                //Parsing offset
+                offsetresult = OffsetFinder(output[3], 0);
+                if (offsetresult.IsSuccessful()) {
+                    offset = Long.parseLong(offsetresult.GetMessage());
+                    //TODO: BEQ specifies number of WORDS to jump, this is fine, but implement word jumping later on if necessary.
+                } else {
+                    r.SetSuccess(false);
+                    r.SetMessage("Couldn't parse offset.");
+                    break;
+                }
+
+                //Building instruction
+                if(offset < 0){ //Negative signed binary algebra
+                    offset = Math.abs(offset);
+                    offset = offset + (1 << 15); //negative bit
+                }
+                machinecode &= (int) (((long) 4 << 26) + offset + ((long) rs << 21 ) + ((long) rt << 16));
+                r.SetSuccess(true);
+                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                 break;
+            }
             case "JMP": {
                 //Parsing offset
                 offsetresult = OffsetFinder(output[1], 1);
                 if (offsetresult.IsSuccessful()) {
                     offset = Long.parseLong(offsetresult.GetMessage());
-                    //TODO: JMP specifies number of WORDS to jump, this is fine, but implement word jumping later on.
+                    //TODO: JMP specifies number of WORDS to jump, this is fine, but implement word jumping later on if necessary.
                     //offset = (long)Math.floor((double)offset); //JMP cannot be done byte by byte
                 } else {
                     r.SetSuccess(false);
@@ -130,9 +192,9 @@ public class Translator {
                     offset = Math.abs(offset);
                     offset = offset + (1 << 25); //negative bit
                 }
-                machinecode &= (((long) 2 << 26) + offset);
+                machinecode &= (int) (((long) 2 << 26) + offset);
                 r.SetSuccess(true);
-                r.SetMessage(Long.toString(machinecode));
+                r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                 break;
             }
             default: {
@@ -150,8 +212,8 @@ public class Translator {
         Matcher regmatcher = regpattern.matcher(input);
         if (regmatcher.find() == true) { //Code should be as readable as possible ;)
             //32 registers maximum
-            //TODO: Make register amount variable?
-            if (Integer.parseInt(regmatcher.group(0)) > 32 || Integer.parseInt(regmatcher.group(0)) < 0) {
+            //TODO: Make register amount variable? Registers are 32 and go from 0 to 31 at the moment.
+            if (Integer.parseInt(regmatcher.group(0)) > 31 || Integer.parseInt(regmatcher.group(0)) < 0) {
                 r.SetSuccess(false);
                 r.SetMessage("Register limit overflow / underflow.");
             } else {
@@ -166,9 +228,10 @@ public class Translator {
         return r;
     }
 
-    //TODO: Merge RegisterFinder & OffsetFinder
-    //0 - BEQ
-    //1 - JMP
+    //TODO: Merge RegisterFinder & OffsetFinder.
+    //TODO: Use mode to dynamically calculate offsets if needed.
+    //0 - BEQ, LW, SW (16-bit OFFSET)
+    //1 - JMP (26-bit OFFSET)
     public Result OffsetFinder(String input, int mode) {
         Result r = new Result();
         Pattern regpattern = Pattern.compile("^(\\+|\\-)?(\\d)+"); //This will also match Ra00044C
