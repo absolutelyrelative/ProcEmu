@@ -17,15 +17,15 @@ public class RegisterFile extends MemoryModule {
     //TODO: Optimise with recursion
     public void PrintInstructionMemory() {
         //Avoid multiple calls
-        Vector<Object> tempmem = super.GetMemory();
+        Vector<String> tempmem = super.GetMemory();
         //For registers it's 0 but let's call it anyway
         //TODO: Remove if not necessary in the future
         long offset = super.GetOffset();
         Double wordsize = super.GetWordSize();
 
         long ctr = 0;
-        for (Object o : tempmem) {
-            System.out.println(prefix + offset + ctr + ": " + o);
+        for (String s : tempmem) {
+            System.out.println(prefix + offset + ctr + ": " + s);
             ctr += wordsize;
         }
     }

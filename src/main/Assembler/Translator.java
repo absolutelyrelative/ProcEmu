@@ -35,6 +35,7 @@ public class Translator {
         return instance;
     }
 
+    //TODO: Use new Decoder class to remove a lot of this clutter and outsource splitting.
     public Result GetMachineCode(String instruction) {
         Result r = new Result();
         Result rsresult, rtresult, rdresult, roresult;
@@ -45,7 +46,7 @@ public class Translator {
         Integer machinecode = 0xFFFFFFFF;
         switch (output[0].toUpperCase()) {
             case "ADD": {
-                if (output.length != 4){
+                if (output.length != 4) {
                     r.SetSuccess(false);
                     r.SetMessage("Wrong instruction format for " + instruction);
                     break;
@@ -84,7 +85,7 @@ public class Translator {
                 }
             }
             case "SUB": {
-                if (output.length != 4){
+                if (output.length != 4) {
                     r.SetSuccess(false);
                     r.SetMessage("Wrong instruction format for " + instruction);
                     break;
@@ -120,7 +121,7 @@ public class Translator {
                 }
             }
             case "LW": { //TODO: Reading from a non-multiple of (wordsize) should be possible.
-                if (output.length != 4){
+                if (output.length != 4) {
                     r.SetSuccess(false);
                     r.SetMessage("Wrong instruction format for " + instruction);
                     break;
@@ -151,7 +152,7 @@ public class Translator {
                 }
             }
             case "SW": {
-                if (output.length != 4){
+                if (output.length != 4) {
                     r.SetSuccess(false);
                     r.SetMessage("Wrong instruction format for " + instruction);
                     break;
@@ -181,8 +182,8 @@ public class Translator {
                     break;
                 }
             }
-            case "BEQ":{
-                if (output.length != 4){
+            case "BEQ": {
+                if (output.length != 4) {
                     r.SetSuccess(false);
                     r.SetMessage("Wrong instruction format for " + instruction);
                     break;
@@ -228,7 +229,7 @@ public class Translator {
                 }
             }
             case "JMP": {
-                if (output.length != 2){
+                if (output.length != 2) {
                     r.SetSuccess(false);
                     r.SetMessage("Wrong instruction format for " + instruction);
                     break;
@@ -265,6 +266,7 @@ public class Translator {
         return r;
     }
 
+    @Deprecated
     public Result RegisterFinder(String input) {
         Result r = new Result();
         Pattern regpattern = Pattern.compile("[^a-zA-Z]+"); //This will also match Ra00044C

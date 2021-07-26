@@ -1,6 +1,9 @@
+import Assembler.Decoder;
+import Assembler.IMUploader;
 import Assembler.InstructionList;
 import Assembler.Translator;
 import Components.InstructionMemory;
+import Util.Format;
 import Util.Result;
 
 import java.util.ArrayList;
@@ -10,24 +13,15 @@ import java.util.Vector;
 public class Main {
 
     public static void main(String[] args) {
-       String s1 = "LW R0,100(R1)";
-       String s2 = "ADD R1,R2,R3";
-       String s3 = "JMP 500";
-       String s4 = "BEQ";
-
-        InstructionList il = new InstructionList();
-        il.AddInstruction(s1);
-        il.AddInstruction(s2);
-        il.AddInstruction(s3);
-        il.AddInstruction(s4);
-        il.PrintInstructions();
-        ArrayList<Result> r = il.TranslateToMachineCode();
-        if(r.isEmpty()){
-            il.PrintMachineCode();
-        } else {
-            for(Result c : r){
-                System.out.println("Error translating." + c.GetMessage());
-            }
-        }
+        /*ArrayList<String> instructions = new ArrayList<>();
+        instructions.add("LW R0,100(r1)");
+        instructions.add("JMP 500");
+        instructions.add("BEQ R1,R2,20");
+        instructions.add("JMP 40");
+        InstructionMemory im = new InstructionMemory((double)32,10,900);
+        IMUploader.getInstance().UploadInstructions(instructions, im, Format.HEX);
+        im.PrintMemory();*/
+        Decoder dc = new Decoder();
+        dc.Splitter("LW R1,200(R2)");
     }
 }

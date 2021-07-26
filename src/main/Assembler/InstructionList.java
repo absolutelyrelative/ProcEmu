@@ -1,5 +1,6 @@
 package Assembler;
 
+import Util.Format;
 import Util.Result;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class InstructionList {
     }
 
     public void EmptyInstructionList() {
-        if(!instructions.isEmpty()){
+        if (!instructions.isEmpty()) {
             for (String s : instructions) {
                 instructions.remove(s);
             }
@@ -44,29 +45,46 @@ public class InstructionList {
     }
 
     public void EmptyMachineCodeList() {
-        if(!machinecode.isEmpty()) {
+        if (!machinecode.isEmpty()) {
             for (String s : machinecode) {
                 machinecode.remove(s);
             }
         }
     }
 
-    public void EmptyResults(){
-        if(!translationresults.isEmpty()){
-            for (Result r : translationresults){
+    public void EmptyResults() {
+        if (!translationresults.isEmpty()) {
+            for (Result r : translationresults) {
                 translationresults.remove(r);
             }
         }
     }
 
-    public ArrayList<Result> TranslateToMachineCode() {
+    public void TranslateToMachineCode(Format format) {
 
-        if(!instructions.isEmpty()) {
+        if (!instructions.isEmpty()) {
             for (String s : instructions) {
                 //Separating
                 Result translationresult = tr.GetMachineCode(s);
                 if (translationresult.IsSuccessful()) {
-                    machinecode.add(translationresult.GetMessage());
+                    switch (format) {
+                        case HEX: {
+                            machinecode.add(String.format("0x%08X", Integer.parseUnsignedInt(translationresult.GetMessage())));
+                            break;
+                        }
+                        case DECIMAL: {
+                            machinecode.add(translationresult.GetMessage());
+                            break;
+                        }
+                        case BINARY: {
+                            machinecode.add(String.format("%32s", Integer.toBinaryString(Integer.parseUnsignedInt(translationresult.GetMessage()))));
+                            break;
+                        }
+                        default: {
+                            machinecode.add(translationresult.GetMessage()); //This should never happen anyway.
+                            break;
+                        }
+                    }
                 } else {
                     Result temp = new Result();
                     temp.SetSuccess(false);
@@ -80,14 +98,31 @@ public class InstructionList {
             temp.SetMessage("No instructions specified.");
             translationresults.add(temp);
         }
-
-        return translationresults;
     }
 
-    public void PrintMachineCode() {
-        if(!machinecode.isEmpty()) {
+    public void PrintMachineCode(Format format) {
+        if (!machinecode.isEmpty()) {
             for (String s : machinecode) {
-                System.out.println(s);
+
+                switch (format) {
+                    case HEX: {
+                        System.out.println(String.format("0x%08X", Integer.parseUnsignedInt(s)));
+                        break;
+                    }
+                    case BINARY: {
+                        System.out.println(String.format("%32s", Integer.toBinaryString(Integer.parseUnsignedInt(s))));
+                        break;
+                    }
+                    case DECIMAL: {
+                        //System.out.println(String.valueOf(Integer.parseUnsignedInt(s)));
+                        System.out.println(s); //No way to do this with String.format without losing 1 bit at least (2^31 - 1)
+                        break;
+                    }
+                    default: {
+                        System.out.println(s); //This should never happen anyway
+                        break;
+                    }
+                }
             }
         }
     }
@@ -100,9 +135,9 @@ public class InstructionList {
         }
     }
 
-    public void PrintResults(){
-        if(!translationresults.isEmpty()){
-            for (Result r : translationresults){
+    public void PrintResults() {
+        if (!translationresults.isEmpty()) {
+            for (Result r : translationresults) {
                 System.out.println(r.GetMessage());
             }
         }
@@ -119,4 +154,5 @@ public class InstructionList {
     public ArrayList<Result> GetTranslationResults() {
         return translationresults;
     }
+
 }
