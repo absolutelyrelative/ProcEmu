@@ -3,7 +3,7 @@ install: skip
 
 os: linux
 dist: trusty
-jdk: openjdk11
+jdk: openjdk16.0.2
 
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
