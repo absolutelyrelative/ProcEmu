@@ -6,6 +6,7 @@ import Components.InstructionMemory;
 import Util.Format;
 import Util.Result;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Vector;

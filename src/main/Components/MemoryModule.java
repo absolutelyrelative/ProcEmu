@@ -3,6 +3,7 @@ package Components;
 import Util.Result;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -34,7 +35,7 @@ public class MemoryModule {
                 return r;
             }
         }
-        if (Double.parseDouble(this.toHex(o.toString())) > Math.pow(2, this.wordsize)) {
+        if (Double.parseDouble(this.toHex(o.toString())) > Math.pow(2, this.wordsize) ) {
             r.SetSuccess(false);
         } else {
             this.MemoryContents.add(o.toString());
@@ -47,11 +48,15 @@ public class MemoryModule {
     //TODO: Add warning for out of bound memory instead of automatically adding more
     public Result AddElement(String s) {
         Result r = new Result();
+        //if( s.getBytes().length > wordsize )
         if (!allowexpansion) {
             if (MemoryContents.size() >= originalsize) {
                 r.SetSuccess(false);
                 return r;
             }
+        }
+        if( Double.parseDouble(this.toHex(s)) > Math.pow(2, this.wordsize) && (double)s.getBytes(StandardCharsets.US_ASCII).length > this.wordsize ) {
+            r.SetSuccess(false);
         } else {
             this.MemoryContents.add(s);
             r.SetSuccess(true);
@@ -61,7 +66,6 @@ public class MemoryModule {
     }
 
     //TODO: Add warning for out of bound memory instead of automatically adding more
-    @Deprecated
     public Result AddElement(long l) {
         Result r = new Result();
         if (!allowexpansion) {
@@ -80,7 +84,6 @@ public class MemoryModule {
     }
 
     //TODO: Add warning for out of bound memory instead of automatically adding more
-    @Deprecated
     public Result AddElement(int i) {
         return this.AddElement((long) i);
     }
