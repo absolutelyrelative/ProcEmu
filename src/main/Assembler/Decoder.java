@@ -17,50 +17,64 @@ public class Decoder {
         return instance;
     }
 
-    //TODO: Potentially improve performance by investigating the Big-O asymptote of ArrayList vs String[].
-    public ArrayList<String> Splitter(String instruction){
-        ArrayList<String> output = new ArrayList<>();
-        String[] regexoutput = instruction.split("[ ,()]+");
-        //System.out.println(output.length);
-        switch(regexoutput[0].toUpperCase()){
-            case "ADD":{
-                if(regexoutput.length != 4){
-                    return null; //Fail
-                } else {
+    //TODO: Utilize this to execute instructions on virtual memory / registers?
+    public Result GetInstructionFromMachineCode(String machinecode){ //Machine Code is saved as Integer.toUnsignedString(machinecode)
+        Result instruction = new Result();
+        //As of Java 8, this should be 32-bit with unsigned option with Integer.parseUnsignedInt() & Integer.toUnsignedLong()
+        Long code = Long.parseUnsignedLong(machinecode);
 
+        switch((int)(code >> 26)){
+            case 0:{
+                //ADD & SUB
+                String funct;
+                long rd, rt, rs;
+                if((code & 0x3F) == 32){
+                    funct = "ADD";
+                } else if((code & 0x3F) == 34){
+                    funct = "SUB";
+                } else {
+                    instruction.SetSuccess(false);
+                    return instruction;
                 }
-                output.add(regexoutput[0].toUpperCase());
+                rd = (code & 0xF800) >> 11;
+                rt = (code & 0x1F0000) >> 16;
+                rs = (code & 0x3E00000) >> 21;
+
+                instruction.SetSuccess(true);
+                instruction.SetMessage(funct + ' ' + rd + ',' + rs + ',' + rt);
                 break;
             }
-            case "SUB":{break;}
-            case "LW":{break;}
-            case "SW":{break;}
-            case "BEQ":{break;}
-            case "JMP":{break;}
-            default:{break;}
+            case 35:{
+                //LW
+                long ro, rd, offset;
+                ro = (code & 0x3E00000) >> 21;
+                rd = (code &  0x1F0000) >> 16;
+                offset = code & 0xFFFF;
+
+                instruction.SetSuccess(true);
+                instruction.SetMessage("LW " + rd + ',' + offset + ',' + ro);
+                break;
+            }
+            case 43:{
+                //SW
+                long ro, rs, offset;
+                ro = (code & 0x3E00000) >> 21;
+                rs = (code &  0x1F0000) >> 16;
+                offset = code & 0xFFFF;
+
+                instruction.SetSuccess(true);
+                instruction.SetMessage("SW " + rs + ',' + offset + ',' + ro);
+                break;
+            }
+            case 2:{
+                //JMP
+                long offset = code & 0x3FFFFFF;
+            }
+            default:{}
+
         }
-        return null;
+
+        return instruction;
     }
 
-    public Result RegisterFinder(String input) {
-        Result r = new Result();
-        Pattern regpattern = Pattern.compile("[^a-zA-Z]+"); //This will also match Ra00044C
-        Matcher regmatcher = regpattern.matcher(input);
-        if (regmatcher.find()) {
-            //32 registers maximum
-            //TODO: Make register amount variable? Registers are 32 and go from 0 to 31 at the moment.
-            if (Integer.parseInt(regmatcher.group(0)) > 31 || Integer.parseInt(regmatcher.group(0)) < 0) {
-                r.SetSuccess(false);
-                r.SetMessage("Register limit overflow / underflow.");
-            } else {
-                r.SetSuccess(true);
-                r.SetMessage(regmatcher.group(0));
-            }
-        } else {
-            //Register not found
-            r.SetSuccess(false);
-            r.SetMessage("Register not found.");
-        }
-        return r;
-    }
 }

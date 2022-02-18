@@ -2,7 +2,6 @@ package Assembler;
 
 import Util.Result;
 
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +16,7 @@ import java.util.regex.Pattern;
 //          100000  6 bit
 //
 
-public class Translator {
+public class Encoder {
     private int opcode;
     private int ro;
     private int rs;
@@ -27,15 +26,16 @@ public class Translator {
     private int funct;
     private long offset;
 
-    private static Translator instance;
+    private static Encoder instance;
 
-    public static Translator getInstance() {
+    public static Encoder getInstance() {
         if (instance == null)
-            instance = new Translator();
+            instance = new Encoder();
         return instance;
     }
 
-    //TODO: Use new Decoder class to remove a lot of this clutter and outsource splitting.
+
+    //TODO: Use new switch to remove a lot of clutter
     public Result GetMachineCode(String instruction) {
         Result r = new Result();
         Result rsresult, rtresult, rdresult, roresult;
@@ -43,6 +43,7 @@ public class Translator {
         String[] output = instruction.split("[ ,()]+"); //TODO: Find better Regex, ex. [\p{Punct}\s]+
 
         //As of Java 8, this should be 32-bit with unsigned option
+        //TODO: Change to long for consistency with decoder
         Integer machinecode = 0xFFFFFFFF;
         switch (output[0].toUpperCase()) {
             case "ADD": {
@@ -78,7 +79,7 @@ public class Translator {
                     }
 
                     //Building instruction
-                    machinecode &= (int) (32 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
+                    machinecode &= (int) (32 + ((long) rs << 21) + ((long) rt << 16) + ((long) rd << 11));
                     r.SetSuccess(true);
                     r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                     break;
@@ -114,7 +115,7 @@ public class Translator {
                     }
 
                     //Building instruction
-                    machinecode &= (int) (34 + ((long) rs << 20) + ((long) rt << 15) + ((long) rd << 10));
+                    machinecode &= (int) (34 + ((long) rs << 21) + ((long) rt << 16) + ((long) rd << 11));
                     r.SetSuccess(true);
                     r.SetMessage(Integer.toUnsignedString(machinecode)); //New in Java 8
                     break;
@@ -266,12 +267,11 @@ public class Translator {
         return r;
     }
 
-    @Deprecated
     public Result RegisterFinder(String input) {
         Result r = new Result();
         Pattern regpattern = Pattern.compile("[^a-zA-Z]+"); //This will also match Ra00044C
         Matcher regmatcher = regpattern.matcher(input);
-        if (regmatcher.find() == true) { //Code should be as readable as possible ;)
+        if (regmatcher.find()) { //Code should be as readable as possible ;)
             //32 registers maximum
             //TODO: Make register amount variable? Registers are 32 and go from 0 to 31 at the moment.
             if (Integer.parseInt(regmatcher.group(0)) > 31 || Integer.parseInt(regmatcher.group(0)) < 0) {
@@ -297,9 +297,9 @@ public class Translator {
         Result r = new Result();
         Pattern regpattern = Pattern.compile("^(\\+|\\-)?(\\d)+"); //This will also match Ra00044C
         Matcher regmatcher = regpattern.matcher(input);
-        if (regmatcher.find() == true) {
+        if (regmatcher.find()) {
             switch (mode) {
-                case 0: { // BEQ
+                case 0 -> { // BEQ
                     if (Math.abs(Long.parseLong(regmatcher.group(0))) > (0x7FFF)) { //(2^15 - 1) OFFSET, 1 bit for sign
                         r.SetSuccess(false);
                         r.SetMessage("Offset Underflow / Overflow.");
@@ -307,9 +307,8 @@ public class Translator {
                         r.SetSuccess(true);
                         r.SetMessage(regmatcher.group(0));
                     }
-                    break;
                 }
-                case 1: { // JMP
+                case 1 -> { // JMP
                     if (Math.abs(Long.parseLong(regmatcher.group(0))) > (0x1FFFFFF)) { // 2^25 - 1
                         r.SetSuccess(false);
                         r.SetMessage("Offset Underflow / Overflow.");
@@ -317,12 +316,10 @@ public class Translator {
                         r.SetSuccess(true);
                         r.SetMessage(regmatcher.group(0));
                     }
-                    break;
                 }
-                default: {
+                default -> {
                     r.SetSuccess(false);
                     r.SetMessage("Unexpected OP.");
-                    break;
                 }
             }
         } else {

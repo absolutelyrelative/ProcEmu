@@ -1,15 +1,5 @@
 import Assembler.Decoder;
-import Assembler.IMUploader;
-import Assembler.InstructionList;
-import Assembler.Translator;
-import Components.InstructionMemory;
-import Util.Format;
-import Util.Result;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Vector;
+import Assembler.Encoder;
 
 public class Main {
 
@@ -22,7 +12,11 @@ public class Main {
         InstructionMemory im = new InstructionMemory((double)32,10,900);
         IMUploader.getInstance().UploadInstructions(instructions, im, Format.HEX);
         im.PrintMemory();*/
+        Encoder ec = new Encoder();
         Decoder dc = new Decoder();
-        dc.Splitter("LW R1,200(R2)");
+
+        String input = ec.GetMachineCode("SUB R1,R2,R3").GetMessage();
+        System.out.println(input);
+        System.out.println(dc.GetInstructionFromMachineCode(input).GetMessage());
     }
 }

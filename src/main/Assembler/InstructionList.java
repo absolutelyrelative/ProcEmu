@@ -9,13 +9,13 @@ public class InstructionList {
     private ArrayList<String> instructions;
     private ArrayList<String> machinecode; //necessary to separate to check Result object
     private ArrayList<Result> translationresults;
-    private Translator tr;
+    private Encoder tr;
 
     public InstructionList() {
         instructions = new ArrayList<>();
         machinecode = new ArrayList<>();
         translationresults = new ArrayList<>();
-        tr = new Translator();
+        tr = new Encoder();
     }
 
     //Is Result usage redundant?
