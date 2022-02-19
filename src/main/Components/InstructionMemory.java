@@ -2,33 +2,25 @@ package Components;
 
 import java.util.ArrayList;
 
-public class InstructionMemory extends MemoryModule {
-    private ProgramCounter pc;
-    private ArrayList<String> instructions;
-    private String nextinstruction; //I could use the ProgramCounter object, but it would be a lot more hassle for a bit more of fidelity.
+public class InstructionMemory {
+    private static InstructionMemory instance;
+    private ArrayList<CellAbstractModel> cells;
 
-    public InstructionMemory(Double wordsize, int size, long offset) {
-        super(wordsize, size, offset, true);
-        this.pc = new ProgramCounter(wordsize);
+    public static InstructionMemory getInstance() {
+        if (instance == null)
+            instance = new InstructionMemory();
+        return instance;
     }
 
-    public ProgramCounter GetPC() {
-        return pc;
+    public InstructionMemory(){
+        cells = new ArrayList<>();
     }
 
-    public ArrayList<String> GetInstructions() {
-        return instructions;
+    public void setCells(ArrayList<CellAbstractModel> cells) {
+        this.cells = cells;
     }
 
-    public void SetInstructions(ArrayList<String> instructions) {
-        this.instructions = instructions;
-    }
-
-    public String GetNextInstruction() {
-        return nextinstruction;
-    }
-
-    public void SetNextInstruction(String nextinstruction) {
-        this.nextinstruction = nextinstruction;
+    public ArrayList<CellAbstractModel> getCells() {
+        return cells;
     }
 }

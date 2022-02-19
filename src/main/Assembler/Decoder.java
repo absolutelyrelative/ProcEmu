@@ -83,6 +83,7 @@ public class Decoder {
 
                 instruction.SetSuccess(true);
                 instruction.SetMessage("BEQ " + rs + ',' + rt + ',' + offset);
+                break;
             }
             default: {
                 instruction.SetSuccess(false);

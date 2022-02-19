@@ -1,6 +1,6 @@
 package Assembler;
 
-import Components.InstructionMemory;
+import Components.CellAbstractModel;
 import Util.Format;
 import Util.Result;
 
@@ -22,22 +22,23 @@ public class IMUploader {
         return instance;
     }
 
-    //Given a list of instructions, the instructions are instantiated as an InstructionList object, and then translated
-    // and added to memory.
-    public void UploadInstructions(ArrayList<String> instructionlist, InstructionMemory im, Format format) {
-        for (String s : instructionlist) {
-            il.AddInstruction(s);
-        }
-        il.TranslateToMachineCode(format);
-        ArrayList<Result> translationresult = il.GetTranslationResults();
-        if (translationresult.isEmpty()) { //No errors
-            im.SetInstructions(instructionlist); //If successful, also add the list to avoid having to decode.
-            im.SetNextInstruction(instructionlist.get(0)); //If successful, set the next instruction accordingly.
-            for (String s : il.GetMachineCode()) {
-                im.AddElement(s); //Adds element to the virtual memory
+    public void UploadInstructions(ArrayList<String> instructionlist, ArrayList<CellAbstractModel> instructionmemory, Format format, int startingaddress) {
+        Encoder ec = new Encoder();
+        Decoder dc = new Decoder();
+        for(String s : instructionlist){
+            if(ec.GetMachineCode(s).IsSuccessful()){
+                if(dc.GetInstructionFromMachineCode(ec.GetMachineCode(s).GetMessage()).IsSuccessful()){
+                    if(instructionmemory.isEmpty()){
+                        CellAbstractModel newcell = new CellAbstractModel((long)0,Long.parseUnsignedLong(ec.GetMachineCode(s).GetMessage()),dc.GetInstructionFromMachineCode(ec.GetMachineCode(s).GetMessage()).GetMessage());
+                        instructionmemory.add(newcell);
+                    } else {
+                        CellAbstractModel newcell = new CellAbstractModel(
+                                ((long)instructionmemory.size()) * instructionmemory.get(0).getIncrement() + startingaddress,
+                                Long.parseUnsignedLong(ec.GetMachineCode(s).GetMessage()), dc.GetInstructionFromMachineCode(ec.GetMachineCode(s).GetMessage()).GetMessage());
+                        instructionmemory.add(newcell);
+                    }
+                }
             }
-        } else { //TODO: Show errors here
-            System.out.println("Errors.");
         }
     }
 

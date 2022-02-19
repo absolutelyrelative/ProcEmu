@@ -2,17 +2,17 @@ package Components;
 
 import java.util.ArrayList;
 
-public class DataMemory {
-    private static DataMemory instance;
+public class RegisterMemory {
+    private static RegisterMemory instance;
     private ArrayList<CellAbstractModel> cells;
 
-    public static DataMemory getInstance() {
+    public static RegisterMemory getInstance() {
         if (instance == null)
-            instance = new DataMemory();
+            instance = new RegisterMemory();
         return instance;
     }
 
-    public DataMemory(){
+    public RegisterMemory(){
         cells = new ArrayList<>();
     }
 
