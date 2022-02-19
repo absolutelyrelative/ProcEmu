@@ -64,3 +64,14 @@
      *JMP 400:
          OP:          2
          OFFSET:    400
+
+
+Core components:
+✅Memory:
+	✅IM
+	✅DM
+	✅PC
+	✅R
+Interpreter:
+	✅Instructions -> Machine Code
+	✅Machine Code -> Instructions

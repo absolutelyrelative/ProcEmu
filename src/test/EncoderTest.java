@@ -34,13 +34,13 @@ public class EncoderTest {
     @Test
     @DisplayName("ADD instruction parsing check.")
     public void TestADDParsing() {
-        assertEquals("18423840", encoder.GetMachineCode("ADD R8,R17,R18").GetMessage());
+        assertEquals("36847648", encoder.GetMachineCode("ADD R8,R17,R18").GetMessage());
     }
 
     @Test
     @DisplayName("SUB instruction parsing check.")
     public void TestSUBParsing() {
-        assertEquals("18423842", encoder.GetMachineCode("SUB R8,R17,R18").GetMessage());
+        assertEquals("36847650", encoder.GetMachineCode("SUB R8,R17,R18").GetMessage());
     }
 
     @Test

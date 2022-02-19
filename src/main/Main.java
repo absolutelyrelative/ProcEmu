@@ -1,5 +1,4 @@
-import Assembler.Decoder;
-import Assembler.Encoder;
+import View.MainView;
 
 public class Main {
 
@@ -12,11 +11,13 @@ public class Main {
         InstructionMemory im = new InstructionMemory((double)32,10,900);
         IMUploader.getInstance().UploadInstructions(instructions, im, Format.HEX);
         im.PrintMemory();*/
-        Encoder ec = new Encoder();
+        /*Encoder ec = new Encoder();
         Decoder dc = new Decoder();
 
-        String input = ec.GetMachineCode("SUB R1,R2,R3").GetMessage();
+        String input = ec.GetMachineCode("BNE R18,R19,400").GetMessage();
         System.out.println(input);
-        System.out.println(dc.GetInstructionFromMachineCode(input).GetMessage());
+        System.out.println(dc.GetInstructionFromMachineCode(input).GetMessage());*/
+        MainView view = new MainView();
+
     }
 }
