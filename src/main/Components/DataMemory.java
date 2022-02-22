@@ -1,10 +1,14 @@
 package Components;
 
+import Util.AbstractCellTable;
+
 import java.util.ArrayList;
 
+@Deprecated
 public class DataMemory {
     private static DataMemory instance;
     private ArrayList<CellAbstractModel> cells;
+    private AbstractCellTable tablemodel;
 
     public static DataMemory getInstance() {
         if (instance == null)
@@ -12,7 +16,7 @@ public class DataMemory {
         return instance;
     }
 
-    public DataMemory(){
+    public DataMemory() {
         cells = new ArrayList<>();
     }
 
@@ -22,5 +26,13 @@ public class DataMemory {
 
     public ArrayList<CellAbstractModel> getCells() {
         return cells;
+    }
+
+    public AbstractCellTable getTablemodel() {
+        return tablemodel;
+    }
+
+    public void setTablemodel(AbstractCellTable tablemodel) {
+        this.tablemodel = tablemodel;
     }
 }

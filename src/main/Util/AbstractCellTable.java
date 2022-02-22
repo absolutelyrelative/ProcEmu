@@ -7,16 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AbstractCellTable extends AbstractTableModel {
-    List<CellAbstractModel> data;
+    ArrayList<CellAbstractModel> data;
     String colNames[] = { "Address", "Data", "Instruction" };
     Class<?> colClasses[] = { Long.class, Long.class, String.class };
 
     public AbstractCellTable(ArrayList<CellAbstractModel> data) {
         this.data = data;
-
-        /*data.add(new CellAbstractModel(1,1,"no"));
-        data.add(new CellAbstractModel(1,2,"no"));
-        data.add(new CellAbstractModel(1,3,"no"));*/
     }
 
     public int getRowCount() {
@@ -25,6 +21,10 @@ public class AbstractCellTable extends AbstractTableModel {
 
     public int getColumnCount() {
         return colNames.length;
+    }
+
+    public ArrayList<CellAbstractModel> getdata(){
+        return data;
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
@@ -64,4 +64,15 @@ public class AbstractCellTable extends AbstractTableModel {
         }
         fireTableCellUpdated(rowIndex, columnIndex);
     }
+
+    public void addelement(CellAbstractModel value){
+        data.add(value);
+        fireTableRowsInserted(data.size()-1, data.size()-1);
+    }
+
+    public void clearelements(){
+        data.clear();
+    }
+
+
 }

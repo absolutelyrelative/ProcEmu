@@ -2,6 +2,7 @@ package Components;
 
 import java.util.ArrayList;
 
+@Deprecated
 public class RegisterMemory {
     private static RegisterMemory instance;
     private ArrayList<CellAbstractModel> cells;

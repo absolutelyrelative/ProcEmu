@@ -1,20 +1,18 @@
 package View.Panels;
 
-import Assembler.IMUploader;
-import Components.CellAbstractModel;
 import Components.InstructionMemory;
 import Util.AbstractCellTable;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class MemoryViewPanel extends JPanel {
     private JTextField jumptolinetextfield = new JTextField();
     private JButton jumptolinebutton = new JButton("Jump to line");
+    AbstractCellTable datamemory;
 
 
-    public MemoryViewPanel() {
+    public MemoryViewPanel(AbstractCellTable datamemory) {
+        this.datamemory = datamemory;
         setSize(1000, 800);
         setVisible(true);
         setLayout(new BorderLayout());
@@ -31,8 +29,7 @@ public class MemoryViewPanel extends JPanel {
         //Component settings
         jumptolinetextfield.setColumns(16);
 
-        AbstractCellTable memorytable = new AbstractCellTable(InstructionMemory.getInstance().getCells());
-        JTable table = new JTable(memorytable);
+        JTable table = new JTable(datamemory);
         JScrollPane pane = new JScrollPane(table);
         //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 

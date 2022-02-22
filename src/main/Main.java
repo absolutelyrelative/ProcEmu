@@ -17,7 +17,7 @@ public class Main {
         String input = ec.GetMachineCode("BNE R18,R19,400").GetMessage();
         System.out.println(input);
         System.out.println(dc.GetInstructionFromMachineCode(input).GetMessage());*/
-        MainView view = new MainView();
+        //MainView view = new MainView();
 
     }
 }

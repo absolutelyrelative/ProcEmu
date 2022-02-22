@@ -1,6 +1,5 @@
 package Components;
 
-//TODO: Refactor all Memory Components to utilise this Cell Model
 public class CellAbstractModel {
     int increment = 32; //Word
     Long address = (long)0;
