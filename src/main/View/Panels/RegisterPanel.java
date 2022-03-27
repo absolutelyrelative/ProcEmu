@@ -22,6 +22,8 @@ public class RegisterPanel extends JPanel {
     private JTextField currentinstructiontextfield = new JTextField(20);
     private JButton executebutton = new JButton("Execute");
 
+    GridBagConstraints gbc = new GridBagConstraints();
+
 
     public RegisterPanel(AbstractCellTable instructionmemory, AbstractCellTable datamemory) {
         //Frame properties
@@ -31,21 +33,22 @@ public class RegisterPanel extends JPanel {
 
         //Border panels
         JPanel northpanel = new JPanel(new FlowLayout());
-        JPanel linestartpanel = new JPanel(new GridLayout(17, 4, 20, 20));
-        JPanel lineendpanel = new JPanel(new FlowLayout());
+        JPanel registerpanel = new JPanel(new GridBagLayout());
         JPanel southpanel = new JPanel(new FlowLayout());
 
         //North panel text
-        linestartpanel.add(registertitle);
-        linestartpanel.add(new JLabel()); //I hate FlowLayout
-        linestartpanel.add(new JLabel()); //I hate FlowLayout
-        linestartpanel.add(new JLabel()); //I hate FlowLayout
+        /*centerpanel.add(registertitle);
+        centerpanel.add(new JLabel()); //I hate FlowLayout
+        centerpanel.add(new JLabel()); //I hate FlowLayout
+        centerpanel.add(new JLabel()); //I hate FlowLayout*/
 
         //Component properties
         registerlabels = new ArrayList<>(32);
         registertextfields = new ArrayList<>(32);
         currentinstructiontextfield.setEditable(false);
 
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         //Populate Arrays and add to panel
         for (int registercount = 0; registercount < 32; registercount++) {
             //Populate ArrayLists
@@ -58,8 +61,19 @@ public class RegisterPanel extends JPanel {
             registertextfields.add(currenttf);
 
             //Add ArrayLists to panel
-            linestartpanel.add(registerlabels.get(registercount));
-            linestartpanel.add(registertextfields.get(registercount));
+            if(registercount %2 == 0) { //if y axis is not being moved
+                gbc.gridx = 0;
+                registerpanel.add(registerlabels.get(registercount), gbc);
+                gbc.gridx = 1;
+                registerpanel.add(registertextfields.get(registercount), gbc);
+            } else {
+                gbc.gridx = 2;
+                registerpanel.add(registerlabels.get(registercount), gbc);
+                gbc.gridx = 3;
+                registerpanel.add(registertextfields.get(registercount), gbc);
+                gbc.gridy++; //This should be incremented each two
+            }
+
         }
 
         //Current operation panel
@@ -68,16 +82,15 @@ public class RegisterPanel extends JPanel {
         programcounterfield.setText(String.format("%08X", 0));
         southpanel.add(programcounterlabel);
         southpanel.add(programcounterfield);
-        lineendpanel.add(loadprogrambutton);
-        lineendpanel.add(currentinstructionlabel);
-        lineendpanel.add(currentinstructiontextfield);
-        lineendpanel.add(executebutton);
+        northpanel.add(loadprogrambutton);
+        northpanel.add(currentinstructionlabel);
+        northpanel.add(currentinstructiontextfield);
+        northpanel.add(executebutton);
 
 
         //Add to main panel
         add(northpanel, BorderLayout.NORTH);
-        add(linestartpanel, BorderLayout.LINE_START);
-        add(lineendpanel, BorderLayout.LINE_END);
+        add(registerpanel, BorderLayout.CENTER);
         add(southpanel, BorderLayout.SOUTH);
 
         //Initial population
