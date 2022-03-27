@@ -1,27 +1,27 @@
 package View;
 
-import Assembler.IMUploader;
 import Components.CellAbstractModel;
-import Components.InstructionMemory;
 import Util.AbstractCellTable;
 import View.Panels.AssemblerViewPanel;
 import View.Panels.MemoryViewPanel;
 import View.Panels.RegisterPanel;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class MainView extends JFrame {
     JTabbedPane mainpanel;
 
-    public MainView(AbstractCellTable instructionmemory, AbstractCellTable datamemory){
+    public MainView(AbstractCellTable instructionmemory, AbstractCellTable datamemory) {
 
         //Attempt to mimic system UI
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            FlatLightLaf.setup();
+            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(new FlatIntelliJLaf());
         } catch (Exception e) {
             setDefaultLookAndFeelDecorated(true);
             e.printStackTrace();
