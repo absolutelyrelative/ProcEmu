@@ -113,18 +113,22 @@ public class InstructionExecutor {
         //Sets PC to next instruction
         long nextinstruction_logicalposition = Long.parseUnsignedLong(programcounterfield.getText());
         long nextinstruction_virtualposition = nextinstruction_logicalposition / 32; //TODO: Remove hard-code of 32 bits
-        if((long)instructionmemory.getValueAt((int)nextinstruction_virtualposition,0) == nextinstruction_logicalposition){
-            //Safety check
-            if(instructionmemory.getValueAt((int)(nextinstruction_virtualposition + 1),0) != null){ //if next PC is not invalid
-                programcounterfield.setText(String.format("%08X",instructionmemory.getValueAt((int)(nextinstruction_virtualposition + 1),0)));
-                currentinstructiontextfield.setText(String.valueOf(instructionmemory.getValueAt((int)(nextinstruction_virtualposition),2)));
-            } else { //Reset program
-                currentinstructiontextfield.setText(String.valueOf(instructionmemory.getValueAt((int)(nextinstruction_virtualposition),2)));
-                JOptionPane.showMessageDialog(null,"Program terminated. PC will be reset to 0.");
-                SetPCToPosition(0);
+        try {
+            if ((long) instructionmemory.getValueAt((int) nextinstruction_virtualposition, 0) == nextinstruction_logicalposition) {
+                //Safety check
+                if (instructionmemory.getValueAt((int) (nextinstruction_virtualposition + 1), 0) != null) { //if next PC is not invalid
+                    programcounterfield.setText(String.format("%08X", instructionmemory.getValueAt((int) (nextinstruction_virtualposition + 1), 0)));
+                    currentinstructiontextfield.setText(String.valueOf(instructionmemory.getValueAt((int) (nextinstruction_virtualposition), 2)));
+                } else { //Reset program
+                    currentinstructiontextfield.setText(String.valueOf(instructionmemory.getValueAt((int) (nextinstruction_virtualposition), 2)));
+                    JOptionPane.showMessageDialog(null, "Program terminated. PC will be reset to 0.");
+                    SetPCToPosition(0);
+                }
+            } else {
+                //Does not match
             }
-        } else {
-            //Does not match
+        } catch (NullPointerException nullpointerexception){
+            JOptionPane.showMessageDialog(null, "There is no next instruction to execute.");
         }
     }
 

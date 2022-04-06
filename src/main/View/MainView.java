@@ -5,6 +5,8 @@ import Util.AbstractCellTable;
 import View.Panels.AssemblerViewPanel;
 import View.Panels.MemoryViewPanel;
 import View.Panels.RegisterPanel;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
@@ -21,7 +23,7 @@ public class MainView extends JFrame {
         try {
             FlatLightLaf.setup();
             //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel(new FlatIntelliJLaf());
+            UIManager.setLookAndFeel(new FlatDarkLaf());
         } catch (Exception e) {
             setDefaultLookAndFeelDecorated(true);
             e.printStackTrace();
